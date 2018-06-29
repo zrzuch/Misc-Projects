@@ -1,0 +1,18 @@
+1000 Ferris Wheel 
+099 Chocolate Bar 
+499 Chips 
+1001 Text description with exact length of 40 
+799 The matrix 
+399 Bacon 
+199 Text description that is too long and should not pass the test 
+9.99 Beer 
+299 Ruler 
+599 Gift Card 
+699 Pens 
+899 Organic Milk 
+1012 Odd Price 
+101 Description with 1 number 
+100 Test case one .
+125 Test case two
+123456 Test case three
+100000 Test case FoUr

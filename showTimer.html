@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TV Show Timer</title>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+</head>
+<body>
+	<header>TV Show Timers</header>
+	<p>( DAY : HOURS : MINUTES : SECONDS )</p>
+	<p>Tokyo Ghoul :Re</p>
+	<div id="TGRE">
+		<div class="days">00</div> : <div class="hours">00</div> : <div class="minutes">00</div> : <div class="seconds">00</div>
+	</div>
+	<p>Boruto: Naruto Next Generations</p>
+	<div id="BORUTO">
+		<div class="days">00</div> : <div class="hours">00</div> : <div class="minutes">00</div> : <div class="seconds">00</div>
+	</div>
+	<p>My Hero Academia</p>
+	<div id="MHA">
+		<div class="days">00</div> : <div class="hours">00</div> : <div class="minutes">00</div> : <div class="seconds">00</div>
+	</div>
+	<p>The Walking Dead</p>
+	<div id="TWD">
+		<div class="days">00</div> : <div class="hours">00</div> : <div class="minutes">00</div> : <div class="seconds">00</div>
+	</div>
+</body>
+<footer>
+	<a href="index.html">Home</a>
+</footer>
+<style type="text/css">
+	*
+	{
+		font-family: "Lucida Console";
+		color: green;
+		background-color: black;
+		text-align: center;
+	}
+	header
+	{
+		font-size: 30px;
+	}
+	p
+	{
+		font-size: 18px;
+	}
+	div
+	{
+		display: inline;
+	}
+	footer
+	{
+		font-size: 18px;
+		margin-top: 50px;
+		text-align: center;
+	}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+	var timeArrays = [];
+
+	$(document).ready(function()
+	{
+		$("footer").css("width", (window.width / 2));
+		timeArrays['TGRE'] 		= new Array(0,0,0);
+		timeArrays['BORUTO']	= new Array(0,0,0);
+		timeArrays['MHA']		= new Array(0,0,0);
+		timeArrays['TWD']		= new Array(0,0,0);
+
+		$(window).resize(function()
+		{
+			$("footer").css("width", (window.width / 2));
+		});
+
+		window.setInterval(function()
+		{
+			var date = new Date();
+			
+			printTimer('TGRE', remainingTime(getNextDate(date, 2, 10, 0), date));
+
+			printTimer('BORUTO', remainingTime(getNextDate(date, 3, 5, 25), date));
+
+			printTimer('MHA', remainingTime(getNextDate(date, 6, 5, 30), date));
+
+			printTimer('TWD', remainingTime(getNextDate(date, 0, 21, 0), date));
+
+		}, 1000);
+	});
+
+	function printTimer(id, time)
+	{
+		var day = getDaysUntil(time);
+		if (timeArrays[id][0] != day)
+		{
+			timeArrays[id][0] = day;
+			$("#" + id + " .days").text(numberFormat(timeArrays[id][0], 2));
+		}
+
+		var hour = getHoursUntil(time);
+		if (timeArrays[id][1] != hour)
+		{
+			timeArrays[id][1] = hour;
+			$("#" + id + " .hours").text(numberFormat(timeArrays[id][1], 2));
+		}
+
+		var minute = getMinutesUntil(time);
+		if (timeArrays[id][2] != minute)
+		{
+			timeArrays[id][2] = minute;
+			$("#" + id + " .minutes").text(numberFormat(timeArrays[id][2], 2));
+		}
+
+		var TWDseconds = getSecondsUntil(time);
+		$("#" + id + " .seconds").text(numberFormat(TWDseconds, 2));
+	}
+	
+	function getNextDate(d, day, hour, minute)
+	{
+		var daysBefore = day - d.getDay();
+		if (daysBefore < 0)
+		{
+			daysBefore += 7;
+		}
+		else if (daysBefore == 0)
+		{
+			var currentHour = d.getHours();
+			if (hour < currentHour)
+			{
+				daysBefore = 7;
+			}
+			else if (hour == currentHour)
+			{
+				var currentMinute = d.getMinutes();
+				if (minute < currentMinute)
+				{
+					daysBefore = 7;
+				}
+				else if (minute == currentMinute)
+				{
+					if (d.getMilliseconds()  > 0 
+					 || d.getSeconds() 		> 0)
+					{
+						daysBefore = 7;
+					}
+				}
+			}
+		}
+		var date = new Date();
+		date.setDate(d.getDate() + daysBefore);
+		date.setHours(hour);
+		date.setMinutes(minute);
+		date.setSeconds(0);
+		date.setMilliseconds(0);
+		return date;
+	}
+
+	function remainingTime(nextDate, date)
+	{
+		return nextDate.getTime() - date.getTime();
+	}
+
+	function getDaysUntil(time)
+	{
+		return Math.floor(time / 86400000);
+	}
+
+	function getHoursUntil(time)
+	{
+		return Math.floor(time / 3600000) % 24;
+	}
+
+	function getMinutesUntil(time)
+	{
+		return Math.floor(time / 60000) % 60;
+	}
+
+	function getSecondsUntil(time)
+	{
+		return Math.floor(time / 1000) % 60;
+	}
+
+	function numberFormat(num, width)
+	{
+		var string = num.toString();
+		if (string.length == width)
+		{
+			return string;
+		}
+		else if (string.length < width)
+		{
+			var diff = width - string.length;
+			var addZeros = "";
+			for (var i = 0; i < diff; ++i)
+			{
+				addZeros += "0";
+			}
+			if (string.search('.') != -1)
+			{
+				return addZeros + string;
+			}
+			else
+			{
+				return string + addZeros;
+			}
+		}
+		else
+		{
+			var diff = string.length - width;
+			if (string.search('.') != -1)
+			{
+				var currentChar = '';
+				for (var i = 0; i < diff; ++i)
+				{
+					if (string.endsWith(".")) break;
+					string = string.substring(0, string.length - 2);
+				}
+				if (string.endsWith("."))
+				{
+					string = string.substring(0, string.length - 2);
+				}
+			}
+		}
+		return string;
+	}
+
+</script>
+</html>
